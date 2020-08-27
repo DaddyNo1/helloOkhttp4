@@ -2,10 +2,6 @@ package com.daddyno1.hellookhttp3
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import junit.framework.Assert
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import okhttp3.mockwebserver.RecordedRequest
 
 import org.junit.Test
 import org.junit.runner.RunWith

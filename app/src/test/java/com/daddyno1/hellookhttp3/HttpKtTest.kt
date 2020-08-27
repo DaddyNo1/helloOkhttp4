@@ -19,7 +19,7 @@ import java.io.IOException
  * okhttp 单元测试类
  *
  * https://www.jianshu.com/p/da4a806e599b
- *https://blog.csdn.net/android_freshman/article/details/51910937
+ * https://blog.csdn.net/android_freshman/article/details/51910937
  *
  */
 class HttpKtTest {
@@ -32,57 +32,42 @@ class HttpKtTest {
         val dispatcher: Dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse = when (request.path) {
                 "/get" -> {
-                    println("request ->")
-                    println("method:${request.method}")
-                    println()
+                    handleRequest(request)
 
                     MockResponse().setResponseCode(200).setBody("hello world")
                 }
                 "/post" -> {
-                    println("request ->")
-                    println("method:${request.method}")
-                    println("content-type:${request.headers["content-type"]}")
-                    println("body:${request.body.readUtf8()}")
-                    println()
+                    handleRequest(request)
 
                     MockResponse().setResponseCode(200).setBody("{\"a\":\"CC\",\"b\":\"DD\"}")
                 }
                 "/postEnqueue" -> {
-                    println("request ->")
-                    println("method:${request.method}")
-                    println("content-type:${request.headers["content-type"]}")
-                    println("body:${request.body.readUtf8()}")
-                    println()
+                    handleRequest(request)
+
                     Thread.sleep(200) //让请求端超时
 
                     MockResponse().setResponseCode(200).setBody("{\"a\":\"CC\"")
                 }
                 "/form" -> {
-                    println("request ->")
-                    println("method:${request.method}")
-                    println("content-type:${request.headers["content-type"]}")
-                    println("body: ${request.body.readUtf8()}")
-                    println()
+                    handleRequest(request)
 
                     MockResponse().setResponseCode(200).setBody("{\"a\":\"Yes\",\"b\":\"No\"}")
                 }
                 "/postPic" -> {
-                    println("request ->")
-                    println("method:${request.method}")
-                    println("content-type:${request.headers["content-type"]}")
-                    println("body: ${request.body.readUtf8()}")
-                    println()
+                    handleRequest(request)
 
                     MockResponse().setResponseCode(200)
                 }
                 "/postMultipart" -> {
-                    println("request ->")
-                    println("method:${request.method}")
-                    println("content-type:${request.headers["content-type"]}")
-                    println("body: ${request.body.readUtf8()}")
-                    println()
+                    handleRequest(request)
 
                     MockResponse().setResponseCode(200)
+                }
+                "/interceptor" -> {
+                    handleRequest(request)
+                    Thread.sleep(6000)
+
+                    MockResponse().setResponseCode(200).setBody("{\"a\":\"CC\",\"b\":\"DD\"}")
                 }
                 else ->{
                     println(".........................")
@@ -93,6 +78,14 @@ class HttpKtTest {
         }
         server.dispatcher = dispatcher
         server.start(port)
+    }
+
+    fun handleRequest(request: RecordedRequest) {
+        println("request ->")
+        println("method:${request.method}")
+        println("content-type:${request.headers["content-type"]}")
+        println("body:${request.body.readUtf8()}")
+        println()
     }
 
     @After
@@ -153,18 +146,30 @@ class HttpKtTest {
     fun postImageTest() {
         println("--postImageTest--")
         println("thread: ${Thread.currentThread().name} \n")
-        postImage("http:localhost:8099/postPic", File("/Users/jxf/workspace/Android/projects/HelloOkhttp3/pic/pic1.png"))
+        postImage("http:localhost:8099/postPic", File("../pic/pic1.png"))
     }
 
     @Test
     fun postMultipartTest(){
         println("--postMultipart--")
-        postMultipart("http:localhost:8099/postMultipart", File("/Users/jxf/workspace/Android/projects/HelloOkhttp3/pic/pic1.png"))
+        postMultipart("http:localhost:8099/postMultipart", File("../pic/pic1.png"))
     }
 
     @Test
     fun postMultipartOtherTest(){
         println("--postMultipart--")
-        postMultipartOther("http:localhost:8099/postMultipart", File("/Users/jxf/workspace/Android/projects/HelloOkhttp3/pic/pic1.png"), "{\"M\":\"MM\"}")
+        postMultipartOther("http:localhost:8099/postMultipart", File("../pic/pic1.png"), "{\"M\":\"MM\"}")
+    }
+
+    /**
+     * 测试 interceptor 中代码执行的 intercept() 方法的阻塞，及相关回调
+     */
+    @Test
+    fun testInterceptor() {
+        println("--testInterceptor--")
+        println("thread: ${Thread.currentThread().name} \n")
+
+        val str = postJson("http:localhost:8099/interceptor", "{\"a\":\"AA\",\"b\":\"BB\"}")
+        println("response -> $str")
     }
 }

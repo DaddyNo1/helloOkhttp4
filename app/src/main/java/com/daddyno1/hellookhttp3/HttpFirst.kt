@@ -5,20 +5,25 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 
 /**
- * Okhttp代码初体验
+ * Okhttp使用体验
  */
 
+// 推荐OkHttpClient保持单例，每一个client拥有连接池、线程池，重用这些资源可以减少延迟，节省资源。
 private val client by lazy {
-    //为了测试post异步超市，固超时时间设置的很短
+    //为了测试post异步超时，固超时时间设置的很短
+//    OkHttpClient.Builder()
+//        .addInterceptor(LoggingInterceptor())
+//        .readTimeout(100, TimeUnit.MILLISECONDS)
+//        .writeTimeout(100, TimeUnit.MILLISECONDS)
+//        .connectTimeout(100, TimeUnit.MILLISECONDS)
+//        .callTimeout(100, TimeUnit.MILLISECONDS)
+//        .build()
+
     OkHttpClient.Builder()
-        .readTimeout(100, TimeUnit.MILLISECONDS)
-        .writeTimeout(100, TimeUnit.MILLISECONDS)
-        .connectTimeout(100, TimeUnit.MILLISECONDS)
-        .callTimeout(100, TimeUnit.MILLISECONDS)
+        .addInterceptor(LoggingInterceptor())
         .build()
 }
 
