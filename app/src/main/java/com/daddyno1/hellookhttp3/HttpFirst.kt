@@ -31,6 +31,7 @@ private val client by lazy {
 val JSON = "application/json; charset=utf-8".toMediaType()
 val PNG = "image/png; charset=utf-8".toMediaType()
 
+
 /**
  * get 请求
  */
